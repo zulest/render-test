@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { Indicador } from '../indicadores/indicadores.model';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export class IaService {
     private ai: GoogleGenAI;
@@ -8,7 +9,61 @@ export class IaService {
         this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
 
-    async obtenerRespuesta(message: string): Promise<string> {
+    convertToBase64 = (buffer: Buffer<ArrayBufferLike>): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            try {
+                const base64String = buffer.toString('base64');
+                resolve(base64String);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    transcribeAudio = async (base64Audio: string): Promise<string> => {
+        try {
+            // // Generate transcription
+            // const apiKey = process.env.GEMINI_API_KEY;
+            // if (!apiKey) {
+            //     throw new Error('GEMINI_API_KEY is not defined in the environment variables.');
+            // }
+            // const genAI = new GoogleGenerativeAI(apiKey);
+            // const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            // const result = await model.generateContent([
+            //     'Please transcribe this audio file accurately.',
+            //     {
+            //         inlineData: {
+            //             mimeType: 'audio/mp3',
+            //             data: base64Audio
+            //         }
+            //     },
+            // ]);
+
+            // console.log("Transcripción de audio:", result.response.text());
+            // return result.response.text();
+
+
+            const result = await this.ai.models.generateContent({
+                model: 'gemini-2.0-flash',
+                contents: [
+                    'Please transcribe this audio file accurately.',
+                    {
+                        inlineData: {
+                            mimeType: 'audio/mp3',
+                            data: base64Audio
+                        }
+                    },
+                ],
+            });
+
+            return result.text || 'No se pudo transcribir el audio.';
+        } catch (error) {
+            console.error('Error transcribing audio:', error);
+            throw error;
+        }
+    };
+
+    async obtenerRespuesta(message: string | undefined, audioBlob: Buffer<ArrayBufferLike> | null): Promise<string> {
         // Define the function declarations
         const fetchIndicatorNamesFunctionDeclaration = {
             name: 'fetch_indicator_names',
@@ -30,10 +85,27 @@ export class IaService {
             },
         };
 
+        let contents;
+
+        if (audioBlob) {
+            const base64Audio = await this.convertToBase64(audioBlob);
+            contents = [
+                '',
+                {
+                    inlineData: {
+                        mimeType: 'audio/mp3',
+                        data: base64Audio
+                    }
+                },
+            ]
+        } else {
+            contents = [message || ""];
+        }
+
         // Send request with function declarations
         const response = await this.ai.models.generateContent({
             model: 'gemini-2.0-flash',
-            contents: message,
+            contents: contents,
             config: {
                 tools: [{
                     functionDeclarations: [
@@ -62,6 +134,8 @@ export class IaService {
             }
         }
 
+        console.log("Respuesta de Gemini:", response.text);
+        console.log("function calls:", response.functionCalls);
         return response.text || 'No se encontró una respuesta adecuada.';
     }
 }

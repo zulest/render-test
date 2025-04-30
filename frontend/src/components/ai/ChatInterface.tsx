@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Mic, Paperclip, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Paperclip, Bot, User, Loader2 } from 'lucide-react';
 import { InputAudio } from './InputAudio';
 
 interface Message {
   id: string;
   sender: 'user' | 'ai';
   text: string;
+  audio: Blob | null;
   timestamp: Date;
+  state: 'sending' | 'received' | 'error';
 }
 
 export const ChatInterface: React.FC = () => {
@@ -15,12 +17,78 @@ export const ChatInterface: React.FC = () => {
       id: '1',
       sender: 'ai',
       text: 'Hola, soy el asistente financiero IA de la cooperativa. ¿En qué puedo ayudarte hoy?',
+      audio: null,
       timestamp: new Date(),
+      state: "received"
     },
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const setInputAudio = (audioBlob: Blob) => {
+    const id = Date.now().toString();
+    //const audioUrl = URL.createObjectURL(audioBlob);
+    const userMessage: Message = {
+      id: id,
+      sender: 'user',
+      text: '',
+      audio: audioBlob,
+      timestamp: new Date(),
+      state: 'sending',
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    const formData = new FormData();
+    const audioFile = new File([audioBlob], 'audio.mp3', {
+      type: 'audio/mpeg' // Ajusta el tipo MIME según tu formato de audio
+    });
+    formData.append('audio', audioFile);
+
+    fetch('api/chat/audio', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === id
+              ? {
+                ...msg,
+                state: 'received',
+                text: data.transcription || 'No se pudo transcribir el audio.',
+              }
+              : msg
+          )
+        );
+
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          sender: 'ai',
+          text: data.response || 'Lo siento, no tengo información específica sobre esa consulta.',
+          audio: null,
+          timestamp: new Date(),
+          state: 'received',
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error processing audio:', error);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === id
+              ? { ...msg, state: 'error', text: 'Error al enviar el audio.' }
+              : msg
+          )
+        );
+        setIsLoading(false);
+      });
+  }
 
   // Autoscroll to the bottom when messages change
   useEffect(() => {
@@ -29,13 +97,16 @@ export const ChatInterface: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
+    const id = Date.now().toString();
 
     // Add user message
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: id,
       sender: 'user',
       text: inputText,
       timestamp: new Date(),
+      state: 'sending',
+      audio: null,
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -57,6 +128,8 @@ export const ChatInterface: React.FC = () => {
           sender: 'ai',
           text: data.message || 'Lo siento, no tengo información específica sobre esa consulta.',
           timestamp: new Date(),
+          audio: null,
+          state: 'received',
         };
 
         setMessages((prev) => [...prev, aiMessage]);
@@ -69,10 +142,20 @@ export const ChatInterface: React.FC = () => {
           sender: 'ai',
           text: 'Hubo un error al procesar tu consulta. Por favor, inténtalo de nuevo más tarde.',
           timestamp: new Date(),
+          audio: null,
+          state: 'received',
         };
 
         setMessages((prev) => [...prev, aiMessage]);
         setIsLoading(false);
+      }).finally(() => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === id
+              ? { ...msg, state: 'error', text: 'Error al enviar el audio.' }
+              : msg
+          )
+        );
       });
   };
 
@@ -116,9 +199,20 @@ export const ChatInterface: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                <p className="text-xs mt-1 opacity-70">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
+                {
+                  message.audio ? (
+                    <audio controls className="mt-1">
+                      <source src={URL.createObjectURL(message.audio)} type="audio/wav" />
+                      Tu navegador no soporta el elemento de audio.
+                    </audio>
+                  ) : <p className="text-xs mt-1 opacity-70">
+                    {message.state === 'sending' ? (
+                      <span className="text-gray-500">Enviando...</span>
+                    ) : (
+                      <>{message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
+                    )}
+                  </p>
+                }
               </div>
             </div>
           </div>
@@ -156,7 +250,7 @@ export const ChatInterface: React.FC = () => {
             />
           </div>
 
-          <InputAudio onInput={setInputText} />
+          <InputAudio onInput={setInputAudio} />
 
           <button
             onClick={handleSendMessage}

@@ -5,6 +5,7 @@ const router = Router();
 const iaController = new IaController();
 
 // Ruta para enviar un mensaje al chat de IA
-router.post('/', iaController.obtenerRespuesta.bind(iaController));
+router.post('/audio', iaController.uploadMiddleware.single('audio').bind(iaController), iaController.obtenerRespuestaAudio.bind(iaController));
+router.post('/', iaController.obtenerRespuestaTexto.bind(iaController));
 
 export default router;
