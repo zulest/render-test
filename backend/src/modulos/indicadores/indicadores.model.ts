@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../../database/database.connection';
-import { TABLA_INDICADORES } from '../../database/database.constants';
+import { TABLA_INDICADORES, TABLA_INDICADORES_FINANCIEROS } from '../../database/database.constants';
 
 /**
  * Modelo para representar un indicador financiero
@@ -11,7 +11,6 @@ export class Indicador extends Model {
     public id!: number;
     public nombre!: string;
     public descripcion!: string;
-    public idFormula!: number;
     public meta!: number;
     public mayorEsMejor!: boolean;
     public estaActivo!: boolean;
@@ -34,6 +33,10 @@ export class Indicador extends Model {
     };
     public estaEnPantallaInicial!: boolean;
     public ordenMuestra!: number;
+    public numerador!: string;
+    public denominador!: string;
+    public numeradorAbsoluto!: boolean;
+    public denominadorAbsoluto!: boolean;
     public createdAt!: Date;
     public updatedAt!: Date;
 
@@ -43,9 +46,6 @@ export class Indicador extends Model {
      */
     public esValido(): boolean {
         if (!this.nombre || this.nombre.trim() === '') {
-            return false;
-        }
-        if (!this.idFormula) {
             return false;
         }
         return true;
@@ -60,7 +60,6 @@ export class Indicador extends Model {
             id: this.id,
             nombre: this.nombre,
             descripcion: this.descripcion,
-            idFormula: this.idFormula,
             meta: this.meta,
             mayorEsMejor: this.mayorEsMejor,
             estaActivo: this.estaActivo,
@@ -69,6 +68,10 @@ export class Indicador extends Model {
             updatedAt: this.updatedAt,
             estaEnPantallaInicial: this.estaEnPantallaInicial,
             ordenMuestra: this.ordenMuestra,
+            numerador: this.numerador,
+            denominador: this.denominador,
+            numeradorAbsoluto: this.numeradorAbsoluto,
+            denominadorAbsoluto: this.denominadorAbsoluto,
         };
     }
 }
@@ -88,11 +91,6 @@ Indicador.init(
         descripcion: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        idFormula: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            field: 'id_formula',
         },
         meta: {
             type: DataTypes.FLOAT,
@@ -174,11 +172,41 @@ Indicador.init(
             defaultValue: 0,
             field: 'orden_muestra',
         },
+        numerador: {
+            type: DataTypes.JSON,
+            allowNull: false,
+        },
+        denominador: {
+            type: DataTypes.JSON,
+            allowNull: false,
+        },
+        numeradorAbsoluto: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+            field: 'numerador_absoluto',
+        },
+        denominadorAbsoluto: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+            field: 'denominador_absoluto',
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            field: 'created_at',
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            field: 'updated_at',
+        },
     },
     {
         sequelize,
         modelName: 'Indicador',
-        tableName: TABLA_INDICADORES,
+        tableName: TABLA_INDICADORES_FINANCIEROS,
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
