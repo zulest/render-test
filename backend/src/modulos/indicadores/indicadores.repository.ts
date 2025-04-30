@@ -1,6 +1,7 @@
 import { BaseRepository } from "../../base/base.repository";
 import { getSequelize } from "../../database/database.connection";
 import { Indicador } from "./indicadores.model";
+import { obtenerIndicadoresCalculados } from "./obtenerIndicadoresCalculados";
 
 export class IndicadoresRepository extends BaseRepository<Indicador> {
     private sequelize = getSequelize(); // Obtener la instancia de Sequelize
@@ -52,5 +53,9 @@ export class IndicadoresRepository extends BaseRepository<Indicador> {
         }
         this.indicadores.splice(index, 1);
         return true;
+    }
+
+    async obtenerIndicadoresCalculados(oficina: string) {
+        obtenerIndicadoresCalculados(oficina);
     }
 }

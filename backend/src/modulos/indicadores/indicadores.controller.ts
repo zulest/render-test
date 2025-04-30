@@ -76,4 +76,17 @@ export class IndicadoresController {
             res.status(500).json({ message: 'Error al eliminar el indicador financiero', error });
         }
     }
+
+    async obtenerIndicadoresCalculados(req: Request, res: Response): Promise<void> {
+        console.log("called")
+        try {
+            const { oficina } = req.params;
+            console.log(`[controller] Obteniendo indicadores calculados para la oficina: ${oficina}`);
+            await this.indicadoresService.obtenerIndicadoresCalculados(oficina);
+            res.status(200).json({ message: 'Indicadores calculados correctamente' });
+        } catch (error) {
+            console.error("[controller] Error al obtener los indicadores calculados:", error);
+            res.status(500).json({ message: 'Error al obtener los indicadores calculados', error });
+        }
+    }
 }

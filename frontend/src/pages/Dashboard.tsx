@@ -13,7 +13,7 @@ export const Dashboard: React.FC = () => {
     { month: 'May', consumo: 340000, microCredito: 230000, vivienda: 145000 },
     { month: 'Jun', consumo: 360000, microCredito: 240000, vivienda: 150000 },
   ];
-  
+
   const depositsData = [
     { month: 'Ene', ahorrosVista: 400000, plazoFijo: 600000 },
     { month: 'Feb', ahorrosVista: 420000, plazoFijo: 650000 },
@@ -22,7 +22,11 @@ export const Dashboard: React.FC = () => {
     { month: 'May', ahorrosVista: 490000, plazoFijo: 720000 },
     { month: 'Jun', ahorrosVista: 510000, plazoFijo: 750000 },
   ];
-  
+
+  // const indicadoresFinancieros = [
+  //   { month: '2025-01-01 00:00:00', 1: 15.2, 2: 18.1, 3: 1.2 },
+  // ]
+
   const financialIndicators = [
     { month: 'Ene', liquidez: 15.2, solvencia: 18.1, rentabilidad: 1.2 },
     { month: 'Feb', liquidez: 15.5, solvencia: 18.0, rentabilidad: 1.3 },
@@ -31,14 +35,14 @@ export const Dashboard: React.FC = () => {
     { month: 'May', liquidez: 16.5, solvencia: 18.4, rentabilidad: 1.6 },
     { month: 'Jun', liquidez: 16.8, solvencia: 18.5, rentabilidad: 1.7 },
   ];
-  
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Panel de Control</h1>
         <p className="text-gray-600">Resumen de indicadores financieros al 30 de junio, 2025</p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           title="Cartera de Crédito"
@@ -48,7 +52,7 @@ export const Dashboard: React.FC = () => {
           color="blue"
           description="Total de la cartera de crédito activa"
         />
-        
+
         <KpiCard
           title="Socios Activos"
           value="12,450"
@@ -57,7 +61,7 @@ export const Dashboard: React.FC = () => {
           color="green"
           description="Número de socios con cuentas activas"
         />
-        
+
         <KpiCard
           title="Captaciones"
           value="$7,250,000"
@@ -66,7 +70,7 @@ export const Dashboard: React.FC = () => {
           color="purple"
           description="Total de depósitos (vista y plazo fijo)"
         />
-        
+
         <KpiCard
           title="Índice de Morosidad"
           value="3.2%"
@@ -76,7 +80,7 @@ export const Dashboard: React.FC = () => {
           description="Porcentaje de cartera vencida frente al total"
         />
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard
           title="Evolución de Cartera de Crédito"
@@ -91,7 +95,7 @@ export const Dashboard: React.FC = () => {
           ]}
           height={300}
         />
-        
+
         <ChartCard
           title="Evolución de Captaciones"
           subTitle="Distribución por tipo de depósito (últimos 6 meses)"
@@ -105,7 +109,7 @@ export const Dashboard: React.FC = () => {
           height={300}
         />
       </div>
-      
+
       <div className="grid grid-cols-1 gap-6">
         <ChartCard
           title="Indicadores Financieros"

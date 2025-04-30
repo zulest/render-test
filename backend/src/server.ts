@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import indicadoresRoutes from './modulos/indicadores/indicadores.routes';
+import indicadoresCalculadosRoutes from './modulos/indicadoresCalculados/indicadoresCalculados.routes';
 import iaRoutes from './modulos/ia/ia.routes';
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Usar las rutas de indicadores
 app.use('/api/indicadores', indicadoresRoutes);
+app.use('/api/indicadores-calculados', indicadoresCalculadosRoutes)
 app.use('/api/chat', iaRoutes);
 
 // Servir archivos estáticos desde la carpeta 'frontend'

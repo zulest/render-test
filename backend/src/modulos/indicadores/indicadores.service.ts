@@ -33,4 +33,8 @@ export class IndicadoresService {
     async eliminar(id: string): Promise<boolean> {
         return await this.indicadoresRepository.eliminar(id);
     }
+
+    async obtenerIndicadoresCalculados(oficina: string) {
+        return await this.indicadoresRepository.obtenerIndicadoresCalculados(oficina);
+    }
 }
