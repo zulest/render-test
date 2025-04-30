@@ -152,7 +152,7 @@ export const ChatInterface: React.FC = () => {
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === id
-              ? { ...msg, state: 'error', text: 'Error al enviar el audio.' }
+              ? { ...msg, state: 'received', text: inputText }
               : msg
           )
         );
