@@ -1,6 +1,5 @@
 import { getSequelize } from "../../database/database.connection";
-import { BaseRepository } from "../../base/base.repository";
-import { Sequelize, QueryTypes } from "sequelize"; // Importar Sequelize y QueryTypes
+import { QueryTypes } from "sequelize"; // Importar Sequelize y QueryTypes
 import { SaldoContable } from "./saldos.model"; // Asegúrate de que esta clase exista y esté correctamente importada
 
 interface SaldoResult {
@@ -24,8 +23,7 @@ export class SaldosRepository {
     async obtenerSaldosPorQuery(queryString: string, parametros: Record<string, string>): Promise<Array<SaldoContable>> {
         try {
             // Ejecutar la consulta personalizada directamente
-            console.log('Ejecutando consulta SQL:', queryString);
-            console.log('Con parámetros:', parametros);
+            console.log('Ejecutando consulta SQL con parámetros:', parametros);
 
             const results: SaldoResult[] = await this.sequelize.query(queryString, {
                 replacements: parametros,

@@ -10,6 +10,8 @@ router.get('/', indicadoresController.obtenerIndicadores.bind(indicadoresControl
 // Ruta para obtener indicadores calculados
 router.get('/calcular/:oficina', indicadoresController.obtenerIndicadoresCalculados.bind(indicadoresController));
 
+router.get('/calcular-periodo', indicadoresController.obtenerPromedioIndicadoresOficina.bind(indicadoresController));
+
 // Ruta para obtener un indicador financiero por ID
 router.get('/:id', indicadoresController.obtenerIndicadorPorId.bind(indicadoresController));
 

@@ -2,4 +2,5 @@ backend/node_modules
 backend/dist
 bruno
 frontend/.bolt
+shared/node_modules
 .vscode/settings.json

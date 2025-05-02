@@ -2,9 +2,8 @@
  * Configuración de la conexión a la base de datos
  */
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
 
-dotenv.config();
+require('custom-env').env()
 
 let sequelizeInstance: Sequelize | null = null;
 

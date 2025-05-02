@@ -1,7 +1,9 @@
 import { BaseRepository } from "../../base/base.repository";
 import { getSequelize } from "../../database/database.connection";
 import { Indicador } from "./indicadores.model";
-import { obtenerIndicadoresCalculados } from "./obtenerIndicadoresCalculados";
+import { obtenerIndicadoresCalculados } from "./transformers/obtenerIndicadoresCalculados";
+import { indicadoresCalculadosPorfecha, indicadoresCalculadosPorMes, indicadoresCalculadosPorPeriodo, obtenerColorIndicador } from "./transformers/promediarIndicadoresPorFecha";
+import { IndicadorCalcularPeriodoResponse, IndicadorColor } from "shared/src/types/indicadores.types";
 
 export class IndicadoresRepository extends BaseRepository<Indicador> {
     private sequelize = getSequelize(); // Obtener la instancia de Sequelize
@@ -56,6 +58,26 @@ export class IndicadoresRepository extends BaseRepository<Indicador> {
     }
 
     async obtenerIndicadoresCalculados(oficina: string) {
-        obtenerIndicadoresCalculados(oficina);
+        const indicadores = await this.obtenerTodos();
+        console.log("indicadores", indicadores);
+        const indicadoresCalculados = await obtenerIndicadoresCalculados(oficina, indicadores);
+        return indicadoresCalculados;
+    }
+
+    async obtenerPromedioIndicadoresOficina(oficina: string, fechaInicio: string, fechaFin: string): Promise<IndicadorCalcularPeriodoResponse> {
+        const indicadores = await this.obtenerTodos();
+        const indicadoresCalculados = await obtenerIndicadoresCalculados(oficina, indicadores, fechaInicio, fechaFin);
+        const indicadoresPorFecha = indicadoresCalculadosPorfecha(indicadoresCalculados, indicadores);
+        const indicadoresPorPeriodo = indicadoresCalculadosPorPeriodo(indicadoresPorFecha, fechaInicio, fechaFin);
+        const indicadoresPorMes = indicadoresCalculadosPorMes(indicadoresPorPeriodo, indicadores);
+
+        const indicadoresColor: IndicadorColor[] = indicadores.map(i => {
+            return { id: i.id, nombre: i.nombre, color: obtenerColorIndicador(i) };
+        });
+
+        return {
+            indicadores: indicadoresColor,
+            indicadoresCalculados: indicadoresPorMes
+        };
     }
 }

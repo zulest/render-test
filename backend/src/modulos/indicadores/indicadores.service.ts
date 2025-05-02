@@ -37,4 +37,8 @@ export class IndicadoresService {
     async obtenerIndicadoresCalculados(oficina: string) {
         return await this.indicadoresRepository.obtenerIndicadoresCalculados(oficina);
     }
+
+    async obtenerPromedioIndicadoresOficina(oficina: string, fechaInicio: string, fechaFin: string) {
+        return await this.indicadoresRepository.obtenerPromedioIndicadoresOficina(oficina, fechaInicio, fechaFin);
+    }
 }

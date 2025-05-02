@@ -77,15 +77,28 @@ export class IndicadoresController {
         }
     }
 
+
     async obtenerIndicadoresCalculados(req: Request, res: Response): Promise<void> {
-        console.log("called")
         try {
             const { oficina } = req.params;
             console.log(`[controller] Obteniendo indicadores calculados para la oficina: ${oficina}`);
-            await this.indicadoresService.obtenerIndicadoresCalculados(oficina);
-            res.status(200).json({ message: 'Indicadores calculados correctamente' });
+            const indicadoresCalculados = await this.indicadoresService.obtenerIndicadoresCalculados(oficina);
+            res.status(200).json(indicadoresCalculados);
         } catch (error) {
             console.error("[controller] Error al obtener los indicadores calculados:", error);
+            res.status(500).json({ message: 'Error al obtener los indicadores calculados', error });
+        }
+    }
+
+    async obtenerPromedioIndicadoresOficina(req: Request, res: Response): Promise<void> {
+        try {
+            const oficina = req.query["oficina"];
+            const fechaInicio = req.query["fechaInicio"];
+            const fechaFin = req.query["fechaFin"];
+            const promedioIndicadores = await this.indicadoresService.obtenerPromedioIndicadoresOficina(oficina as string, fechaInicio as string, fechaFin as string);
+            res.status(200).json(promedioIndicadores);
+        } catch (error) {
+            console.error("[controller] Error al obtener el promedio de indicadores:", error);
             res.status(500).json({ message: 'Error al obtener los indicadores calculados', error });
         }
     }

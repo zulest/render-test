@@ -2,6 +2,7 @@ import React from 'react';
 import { KpiCard } from '../components/dashboard/KpiCard';
 import { ChartCard } from '../components/dashboard/ChartCard';
 import { CreditCard, Users, PiggyBank, DollarSign, BarChart3 } from 'lucide-react';
+import { IndicadoresChart } from '../features/dashboard/IndicadoresChart';
 
 export const Dashboard: React.FC = () => {
   // Sample data for charts
@@ -21,19 +22,6 @@ export const Dashboard: React.FC = () => {
     { month: 'Abr', ahorrosVista: 470000, plazoFijo: 700000 },
     { month: 'May', ahorrosVista: 490000, plazoFijo: 720000 },
     { month: 'Jun', ahorrosVista: 510000, plazoFijo: 750000 },
-  ];
-
-  // const indicadoresFinancieros = [
-  //   { month: '2025-01-01 00:00:00', 1: 15.2, 2: 18.1, 3: 1.2 },
-  // ]
-
-  const financialIndicators = [
-    { month: 'Ene', liquidez: 15.2, solvencia: 18.1, rentabilidad: 1.2 },
-    { month: 'Feb', liquidez: 15.5, solvencia: 18.0, rentabilidad: 1.3 },
-    { month: 'Mar', liquidez: 16.0, solvencia: 18.2, rentabilidad: 1.4 },
-    { month: 'Abr', liquidez: 16.3, solvencia: 18.3, rentabilidad: 1.5 },
-    { month: 'May', liquidez: 16.5, solvencia: 18.4, rentabilidad: 1.6 },
-    { month: 'Jun', liquidez: 16.8, solvencia: 18.5, rentabilidad: 1.7 },
   ];
 
   return (
@@ -109,22 +97,7 @@ export const Dashboard: React.FC = () => {
           height={300}
         />
       </div>
-
-      <div className="grid grid-cols-1 gap-6">
-        <ChartCard
-          title="Indicadores Financieros"
-          subTitle="Evolución de indicadores clave (últimos 6 meses)"
-          type="line"
-          data={financialIndicators}
-          xDataKey="month"
-          series={[
-            { dataKey: 'liquidez', color: '#3B82F6', name: 'Índice de Liquidez (%)' },
-            { dataKey: 'solvencia', color: '#10B981', name: 'Índice de Solvencia (%)' },
-            { dataKey: 'rentabilidad', color: '#F59E0B', name: 'Rentabilidad (ROA %)' },
-          ]}
-          height={350}
-        />
-      </div>
+      <IndicadoresChart />
     </div>
   );
 };
