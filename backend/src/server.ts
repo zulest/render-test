@@ -1,18 +1,17 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import indicadoresRoutes from './modulos/indicadores/indicadores.routes';
-import indicadoresCalculadosRoutes from './modulos/indicadoresCalculados/indicadoresCalculados.routes';
 import iaRoutes from './modulos/ia/ia.routes';
 import { ValidationError } from 'sequelize';
 const app = express();
 const port = process.env.PORT || 3000;
+import './config/firebase.config';
 
 // Middleware para parsear JSON
 app.use(express.json());
 
 // Usar las rutas de indicadores
 app.use('/api/indicadores', indicadoresRoutes);
-app.use('/api/indicadores-calculados', indicadoresCalculadosRoutes)
 app.use('/api/chat', iaRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {

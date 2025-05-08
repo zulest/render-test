@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { Indicador } from '../indicadores/indicadores.model';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { IndicadoresRepository } from '../indicadores/indicadores.repository';
 
 export class IaService {
     private ai: GoogleGenAI;
@@ -8,6 +9,8 @@ export class IaService {
     constructor() {
         this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
+
+    indicadoresRepository = new IndicadoresRepository();
 
     convertToBase64 = (buffer: Buffer<ArrayBufferLike>): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -122,13 +125,13 @@ export class IaService {
             if (functionCall.name === 'fetch_indicator_names') {
                 // Fetch indicator names from the database
                 console.log("obteniendo nombre de indicadores ....")
-                const indicadores = await Indicador.findAll({ attributes: ['nombre'] });
+                const indicadores = await this.indicadoresRepository.obtenerTodos();
                 const nombres = indicadores.map(indicador => indicador.nombre);
                 return `Lista de indicadores: ${nombres.join(', ')}`;
             } else if (functionCall.name === 'fetch_indicator_ids') {
                 console.log("obteniendo ids de indicadores ....")
                 // Fetch indicator IDs from the database
-                const indicadores = await Indicador.findAll({ attributes: ['id'] });
+                const indicadores = await this.indicadoresRepository.obtenerTodos();
                 const ids = indicadores.map(indicador => indicador.id);
                 return `Lista de IDs de indicadores: ${ids.join(', ')}`;
             }

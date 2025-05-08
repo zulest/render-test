@@ -1,11 +1,10 @@
-import { Indicador } from './indicadores.model';
 import { IndicadoresRepository } from './indicadores.repository';
 
 export class IndicadoresService {
     private indicadoresRepository: IndicadoresRepository;
 
     constructor() {
-        this.indicadoresRepository = new IndicadoresRepository(Indicador);
+        this.indicadoresRepository = new IndicadoresRepository();
     }
 
     // Obtener todos los indicadores financieros

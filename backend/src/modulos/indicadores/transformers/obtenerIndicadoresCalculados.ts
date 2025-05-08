@@ -1,8 +1,7 @@
 import { TABLA_CUENTACONTABLE, TABLA_DIVISION, TABLA_SALDOCONTABLE } from "../../../database/database.constants";
 import { SaldosRepository } from "../../saldos/saldos.repository";
-import { calcularIndicador } from "./calcularIndicador";
 import { Indicador } from "../indicadores.model";
-import { CalculoIndicador, IndicadorCalculado } from "../interfaces/IndicadorCalculado.interface";
+import { IndicadorCalculado } from "../interfaces/IndicadorCalculado.interface";
 
 export const obtenerIndicadoresCalculados = async (codigoOficina: string, indicadores: Indicador[], inicio?: string, fin?: string) => {
     const fechas = obtenerFechasMensuales(inicio, fin);
@@ -65,19 +64,19 @@ const calcularIndicadoresParaFecha = async (fecha: Date, codigoOficina: string, 
         console.log(`Se encontraron ${todosSaldos.length} saldos totales para la fecha ${fechaStr}`);
 
         const indicadoresCalculados: IndicadorCalculado[] = [];
-        indicadores.forEach(indicador => {
-            const resultado: CalculoIndicador = calcularIndicador(indicador, todosSaldos);
+        // indicadores.forEach(indicador => {
+        //     const resultado: CalculoIndicador = calcularIndicador(indicador, todosSaldos);
 
-            // Crear objeto de indicador calculado
-            const indicadorCalculado: IndicadorCalculado = {
-                fecha: fechaStr,
-                idIndicador: indicador.id,
-                codigoOficina: codigoOficina,
-                valor: resultado.valor,
-                componentes: resultado.componentes
-            };
-            indicadoresCalculados.push(indicadorCalculado);
-        });
+        //     // Crear objeto de indicador calculado
+        //     const indicadorCalculado: IndicadorCalculado = {
+        //         fecha: fechaStr,
+        //         idIndicador: indicador.id,
+        //         codigoOficina: codigoOficina,
+        //         valor: resultado.valor,
+        //         componentes: resultado.componentes
+        //     };
+        //     indicadoresCalculados.push(indicadorCalculado);
+        // });
         return indicadoresCalculados;
     } catch (error) {
         console.error(`Error al calcular indicadores para la fecha ${fechaStr}:`, error);

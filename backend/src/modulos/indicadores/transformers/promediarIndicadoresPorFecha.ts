@@ -97,7 +97,7 @@ export const indicadoresCalculadosPorMes = (data: IndicadorCalcularPeriodo[], in
     });
 }
 
-export const obtenerColorIndicador = (indicador: Indicador) => {
+export const obtenerColorIndicadorPorUmbral = (indicador: Indicador) => {
     const umbrales = indicador.umbrales;
 
     // Si no hay umbrales, devolver un color por defecto

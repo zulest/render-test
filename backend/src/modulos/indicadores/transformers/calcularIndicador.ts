@@ -1,7 +1,7 @@
-import { SaldoContable } from "../../saldos/saldos.model";
+import { SaldosContables } from "../../saldosContables/saldos.model";
 import { Indicador } from "../indicadores.model";
 
-export const calcularIndicador = (indicador: Indicador, saldos: SaldoContable[]) => {
+export const calcularIndicador = (indicador: Indicador, saldos: SaldosContables[]) => {
     try {
         // Calcular numerador
         const resultadoNumerador = _calcularParteDeLaFormula(
@@ -67,17 +67,16 @@ interface Parte {
     componentes?: Componente[];
 }
 
-const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | string[], aplicarValorAbsoluto = false) => {
+const _calcularParteDeLaFormula = (saldos: SaldosContables[], parte: Parte | string[], aplicarValorAbsoluto = false) => {
     // Objeto para almacenar los valores por cuenta
     const valoresPorCuenta: Record<string, number> = {};
-
     // Si es un array simple de cu00f3digos (formato antiguo)
     if (Array.isArray(parte)) {
         const total = _filtrarPorCodigos(saldos, parte, aplicarValorAbsoluto);
 
         // Calcular valores individuales por cuenta
         saldos.forEach(saldo => {
-            if (parte.some(codigo => saldo.codigoCuentaContable === codigo)) {
+            if (parte.some(codigo => saldo.codigoCuentaContable === Number(codigo))) {
                 const valor = aplicarValorAbsoluto ? Math.abs(saldo.saldo) : saldo.saldo;
                 valoresPorCuenta[saldo.codigoCuentaContable] = valor;
             }
@@ -97,7 +96,7 @@ const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | strin
         // Calcular valores individuales para base
         if (parte.base) {
             saldos.forEach(saldo => {
-                if (parte.base?.some(codigo => saldo.codigoCuentaContable === codigo)) {
+                if (parte.base?.some(codigo => saldo.codigoCuentaContable === Number(codigo))) {
                     const valor = aplicarValorAbsoluto ? Math.abs(saldo.saldo) : saldo.saldo;
                     valoresPorCuenta[saldo.codigoCuentaContable] = valor;
                 }
@@ -110,7 +109,7 @@ const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | strin
         // Calcular valores individuales para suma
         if (parte.suma) {
             saldos.forEach(saldo => {
-                if (parte.suma?.some(codigo => saldo.codigoCuentaContable === codigo)) {
+                if (parte.suma?.some(codigo => saldo.codigoCuentaContable === Number(codigo))) {
                     const valor = aplicarValorAbsoluto ? Math.abs(saldo.saldo) : saldo.saldo;
                     valoresPorCuenta[saldo.codigoCuentaContable] = valor;
                 }
@@ -123,7 +122,7 @@ const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | strin
         // Calcular valores individuales para resta
         if (parte.resta) {
             saldos.forEach(saldo => {
-                if (parte.resta?.some(codigo => saldo.codigoCuentaContable === codigo)) {
+                if (parte.resta?.some(codigo => saldo.codigoCuentaContable === Number(codigo))) {
                     const valor = aplicarValorAbsoluto ? Math.abs(saldo.saldo) : saldo.saldo;
                     valoresPorCuenta[saldo.codigoCuentaContable] = -valor; // Valor negativo para resta
                 }
@@ -156,7 +155,7 @@ const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | strin
             // Calcular valores individuales por cuenta
             componente.cuentas.forEach(codigo => {
                 saldos.forEach(saldo => {
-                    if (saldo.codigoCuentaContable === codigo) {
+                    if (saldo.codigoCuentaContable === Number(codigo)) {
                         let valor = aplicarValorAbsoluto ? Math.abs(saldo.saldo) : saldo.saldo;
                         valor = valor * componente.coeficiente;
                         valoresPorCuenta[saldo.codigoCuentaContable] = valor;
@@ -178,12 +177,12 @@ const _calcularParteDeLaFormula = (saldos: SaldoContable[], parte: Parte | strin
     };
 }
 
-const _filtrarPorCodigos = (saldos: SaldoContable[], codigos: string[], aplicarValorAbsoluto = false) => {
+const _filtrarPorCodigos = (saldos: SaldosContables[], codigos: string[], aplicarValorAbsoluto = false) => {
     return saldos
         .filter(s => {
             // Verificar si alguno de los códigos coincide exactamente con el código de cuenta
             return codigos.some(codigo =>
-                s.codigoCuentaContable === codigo
+                s.codigoCuentaContable === Number(codigo)
             );
         })
         .reduce((sum, s) => {
@@ -193,7 +192,7 @@ const _filtrarPorCodigos = (saldos: SaldoContable[], codigos: string[], aplicarV
         }, 0);
 }
 
-const _calcularComponenteConCoeficiente = (saldos: SaldoContable[], componente: Componente, aplicarValorAbsoluto = false) => {
+const _calcularComponenteConCoeficiente = (saldos: SaldosContables[], componente: Componente, aplicarValorAbsoluto = false) => {
     const valorCuentas = _filtrarPorCodigos(saldos, componente.cuentas, aplicarValorAbsoluto);
     return valorCuentas * componente.coeficiente;
 }
