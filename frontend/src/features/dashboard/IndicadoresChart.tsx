@@ -68,7 +68,7 @@ export const IndicadoresChart = () => {
                 type="line"
                 data={data?.indicadoresCalculados ? data.indicadoresCalculados : []}
                 xDataKey="month"
-                series={data ? data.indicadores.map(indicador => ({
+                series={data ? data.indicadores?.map(indicador => ({
                     dataKey: indicador.nombre, // Convert 'id' to string for dataKey
                     color: indicador.color,
                     name: indicador.nombre,

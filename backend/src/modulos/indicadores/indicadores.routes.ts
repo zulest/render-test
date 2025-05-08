@@ -19,7 +19,7 @@ router.get('/:id', indicadoresController.obtenerIndicadorPorId.bind(indicadoresC
 router.post('/', indicadoresController.crearIndicador.bind(indicadoresController));
 
 // Ruta para actualizar un indicador financiero existente
-router.put('/:id', indicadoresController.actualizarIndicador.bind);
+router.put('/:id', indicadoresController.actualizarIndicador.bind(indicadoresController));
 
 // Ruta para eliminar un indicador financiero
 router.delete('/:id', indicadoresController.eliminarIndicador.bind(indicadoresController));
