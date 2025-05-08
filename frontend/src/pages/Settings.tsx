@@ -8,9 +8,6 @@ import {
   Bell,
   Server,
   Save,
-  Building2,
-  Clock,
-  Languages,
   CreditCard,
   Users,
   PiggyBank,
@@ -23,7 +20,7 @@ export const Settings: React.FC = () => {
 
   const tabs = [
     { id: 'general', name: 'General', icon: <Globe size={18} /> },
-    { id: 'kpis', name: 'KPIs', icon: <Calculator size={18} /> },
+    { id: 'indicadores', name: 'Indicadores', icon: <Calculator size={18} /> },
     { id: 'user', name: 'Usuario', icon: <User size={18} /> },
     { id: 'security', name: 'Seguridad', icon: <Lock size={18} /> },
     { id: 'dataSource', name: 'Fuentes de Datos', icon: <Database size={18} /> },
@@ -114,7 +111,7 @@ export const Settings: React.FC = () => {
               </div>
             )}
 
-            {activeTab === 'kpis' && (
+            {activeTab === 'indicadores' && (
               <KpiFormulaEditor />
             )}
 

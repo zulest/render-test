@@ -50,8 +50,11 @@ export class IndicadoresController {
     async actualizarIndicador(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
+            console.log("indicador a actualizar", id)
             const datosActualizados = req.body;
+            console.log("datos actualizados", datosActualizados)
             const indicadorActualizado = await this.indicadoresService.actualizar(id, datosActualizados);
+            console.log("indicador actualizado", indicadorActualizado)
             if (!indicadorActualizado) {
                 res.status(404).json({ message: 'Indicador no encontrado' });
             } else {

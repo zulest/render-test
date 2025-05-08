@@ -4,7 +4,7 @@ import { IndicadorCalcularPeriodoResponse } from "shared/src/types/indicadores.t
 import { useCallback } from "react";
 
 export const IndicadoresChart = () => {
-    const [data, setData] = useState<IndicadorCalcularPeriodoResponse>();
+    const [data, setData] = useState<IndicadorCalcularPeriodoResponse | null>(null);
     const filters = ['Último mes', 'Último trimestre', 'Último año'];
     const [selectedFilter, setSelectedFilter] = useState('Último semestre');
 
@@ -52,6 +52,7 @@ export const IndicadoresChart = () => {
         try {
             const response = await fetch(`/api/indicadores/calcular-periodo/?oficina=TABACUNDO&fechaInicio=${inicio}&fechaFin=${fin}`);
             const result = await response.json();
+            console.log("result", result);
             setData(result);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -62,6 +63,11 @@ export const IndicadoresChart = () => {
 
     return (
         <div className="grid grid-cols-1 gap-6">
+            {data === undefined ? (
+                <p className="text-center">Cargando...</p>
+            ) : data === null ? (
+                <p className="text-center text-red-600">Error al obtener los datos</p>
+            ) : (
             <ChartCard
                 title="Indicadores Financieros"
                 subTitle="Evolución de indicadores clave (últimos 6 meses)"
@@ -76,7 +82,7 @@ export const IndicadoresChart = () => {
                 height={350}
                 filters={filters}
                 onFilterChange={setSelectedFilter}
-            />
+            />)}
         </div>
     );
 }

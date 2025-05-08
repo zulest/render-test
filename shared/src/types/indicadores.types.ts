@@ -4,7 +4,7 @@ export interface IndicadorCalcularPeriodoResponse {
 }
 
 export interface IndicadorColor {
-    id: number;
+    id: string;
     nombre: string;
     color: string;
 }
@@ -14,7 +14,7 @@ export interface IndicadorCalcularPeriodo {
     [key: string]: string | number;
 }
 
-interface Umbral {
+export interface Umbral {
     umbrales: Array<{
         color: string;
         nivel: string;
@@ -33,8 +33,9 @@ interface Umbral {
 }
 
 export interface IndicadorResponse {
-    id: number;
+    id: string;
     nombre: string;
+    color: string;
     descripcion: string;
     meta: number;
     mayorEsMejor: boolean;

@@ -1,3 +1,4 @@
+import { Indicador } from './indicadores.model';
 import { IndicadoresRepository } from './indicadores.repository';
 
 export class IndicadoresService {
@@ -8,23 +9,24 @@ export class IndicadoresService {
     }
 
     // Obtener todos los indicadores financieros
-    async obtenerTodos(): Promise<any[]> {
+    async obtenerTodos(): Promise<Indicador[]> {
         console.log('[service] Obteniendo todos los indicadores financieros...');
-        return await this.indicadoresRepository.obtenerTodos();
+        const indicadores = await this.indicadoresRepository.obtenerTodos();
+        return indicadores
     }
 
     // Obtener un indicador financiero por ID
-    async obtenerPorId(id: string): Promise<any | null> {
+    async obtenerPorId(id: string): Promise<Indicador | null> {
         return await this.indicadoresRepository.obtenerPorId(id);
     }
 
     // Crear un nuevo indicador financiero
-    async crear(indicador: any): Promise<any> {
+    async crear(indicador: Indicador): Promise<Indicador> {
         return await this.indicadoresRepository.crear(indicador);
     }
 
     // Actualizar un indicador financiero existente
-    async actualizar(id: string, datosActualizados: any): Promise<any | null> {
+    async actualizar(id: string, datosActualizados: Indicador): Promise<Indicador | null> {
         return await this.indicadoresRepository.actualizar(id, datosActualizados);
     }
 

@@ -5,6 +5,7 @@ import { IndicadoresList } from '../../features/indicadores/indicadoresList';
 import Modal, { ModalHandle } from '../../features/indicadores/formulaView';
 import { useRef } from 'react';
 import { IndicadorEditor } from '../../features/indicadores/IndicadorEditor';
+import DeleteIndicadorDialog, { DeleteIndicadorDialogHandle } from '../../features/indicadores/DeleteIndicadorDialog';
 
 interface Formula {
   id: string;
@@ -24,7 +25,11 @@ export const KpiFormulaEditor: React.FC = () => {
   const [indicadores, setIndicadores] = useState<IndicadorResponse[]>([]);
   const [editIndicador, setEditIndicador] = useState<IndicadorResponse | null>(null);
   const [formulaSelected, setFormulaSelected] = useState<IndicadorResponse | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [indicadorSeleccionado, setIndicadorSeleccionado] = useState<IndicadorResponse | null>(null);
   const modalRef = useRef<ModalHandle>(null);
+  const deleteDialogRef = useRef<DeleteIndicadorDialogHandle>(null);
+
   useEffect(() => {
     try {
       fetch(`/api/indicadores`).then(response => response.json().then(data => { console.log(data); setIndicadores(data) }))
@@ -68,7 +73,6 @@ export const KpiFormulaEditor: React.FC = () => {
     }
   ]);
 
-  const [showEditor, setShowEditor] = useState(false);
 
   const categories = [
     'Cartera',
@@ -79,27 +83,51 @@ export const KpiFormulaEditor: React.FC = () => {
     'Eficiencia'
   ];
 
-  const handleDelete = (id: number) => {
-    // TODO("Eliminar un indicador");
-    //setFormulas(formulas.filter(f => f.id !== id));
+  const handleDelete = async (indicador?: IndicadorResponse | null) => {
+    setIndicadorSeleccionado(null);
+    if (!indicador) return;
+    deleteDialogRef.current?.close();
+    await fetch(`/api/indicadores/${indicador.id}`, {
+      method: 'DELETE'
+    }).then(() => {
+      try {
+        fetch(`/api/indicadores`).then(response => response.json().then(data => { console.log(data); setIndicadores(data) }))
+      } catch (error) {
+        console.error("Error al obtener los indicadores", error);
+      }
+    });
   };
 
-  const updateIndicador = (indicador: IndicadorResponse) => {
+  const createUpdateIndicador = async (indicador: IndicadorResponse) => {
     setIndicadores(indicadores.map(i => i.id === indicador.id ? indicador : i));
-    fetch('/api/indicadores/' + indicador.id, {
-      method: 'PUT',
+    const url = editIndicador ? `/api/indicadores/${editIndicador.id}` : '/api/indicadores';
+    const method = editIndicador ? 'PUT' : 'POST';
+    await fetch(url, {
+      method: method,
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(indicador)
-    });
+    }).then(() => {
+      try {
+        fetch(`/api/indicadores`).then(response => response.json().then(data => { console.log(data); setIndicadores(data) }))
+      } catch (error) {
+        console.error("Error al obtener los indicadores", error);
+      }
+    })
+    setShowEditor(false);
+  }
+
+  const showDeleteDialog = (indicador: IndicadorResponse) => {
+    setIndicadorSeleccionado(indicador);
+    deleteDialogRef.current?.open();
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Configuración de KPIs</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Configuración de Indicadores</h2>
           <p className="text-sm text-gray-600">Define y personaliza las fórmulas de cálculo para indicadores</p>
         </div>
         <button
@@ -115,17 +143,23 @@ export const KpiFormulaEditor: React.FC = () => {
       </div>
 
 
-      {showEditor && <IndicadorEditor indicador={editIndicador} onSubmit={(indicador: IndicadorResponse) => updateIndicador(indicador)} onCancel={() => setShowEditor(false)} />}
+      {showEditor && <IndicadorEditor indicador={editIndicador} onSubmit={(indicador: IndicadorResponse) => createUpdateIndicador(indicador)} onCancel={() => setShowEditor(false)} />}
       {indicadores ? <IndicadoresList
         indicadores={indicadores}
         setShowEditor={setShowEditor}
         setEditIndicador={setEditIndicador}
         setFormulaSelected={showFormula}
-        handleDelete={handleDelete} /> : <>Error al obtener la lista de indicadores</>}
+        handleDelete={(indicador: IndicadorResponse) => showDeleteDialog(indicador)} /> : <>Error al obtener la lista de indicadores</>}
       <Modal
         ref={modalRef}
-        setIndicadores={(indicador: IndicadorResponse) => updateIndicador(indicador)}
+        setIndicadores={(indicador: IndicadorResponse) => createUpdateIndicador(indicador)}
         indicador={formulaSelected}
+      />
+      <DeleteIndicadorDialog
+        ref={deleteDialogRef}
+        indicador={indicadorSeleccionado}
+        onClose={() => setIndicadorSeleccionado(null)}
+        onConfirm={() => handleDelete(indicadorSeleccionado)}
       />
     </div>
   );

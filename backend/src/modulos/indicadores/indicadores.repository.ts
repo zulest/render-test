@@ -2,34 +2,68 @@ import { BaseFirebaseRepository } from "../../base/base.firebaseRepository";
 import { Indicador } from "./indicadores.model";
 import { calcularSaldosContables } from "./test/obtenerSaldosContables";
 import { obtenerIndicadoresCalculados } from "./transformers/obtenerIndicadoresCalculados";
-import { indicadoresCalculadosPorfecha, indicadoresCalculadosPorMes, indicadoresCalculadosPorPeriodo } from "./transformers/promediarIndicadoresPorFecha";
+import {
+  indicadoresCalculadosPorfecha,
+  indicadoresCalculadosPorMes,
+  indicadoresCalculadosPorPeriodo,
+} from "./transformers/promediarIndicadoresPorFecha";
 import { IndicadorColor } from "shared/src/types/indicadores.types";
 
 export class IndicadoresRepository extends BaseFirebaseRepository<Indicador> {
-    constructor() {
-        super('Indicadores');
-      }
+  constructor() {
+    super("Indicadores");
+  }
 
-    async obtenerIndicadoresCalculados(oficina: string) {
-        const indicadores = await this.obtenerTodos();
-        const indicadoresCalculados = await obtenerIndicadoresCalculados(oficina, indicadores);
-        return indicadoresCalculados;
-    }
+  async crear(data: Partial<Indicador>): Promise<Indicador> {
+    console.log("creando indicador", data)
+    const docRef = this.collection.doc();
+    data.id = docRef.id;
+    await docRef.set(data);
+    return data as Indicador;
+  }
 
-    async obtenerPromedioIndicadoresOficina(oficina: string, fechaInicio: string, fechaFin: string) {
-        const indicadores = await this.obtenerTodos();
-        const saldosContables = await calcularSaldosContables(indicadores, oficina, fechaInicio, fechaFin);
-        const indicadoresPorFecha = indicadoresCalculadosPorfecha(saldosContables, indicadores);
-        const indicadoresPorPeriodo = indicadoresCalculadosPorPeriodo(indicadoresPorFecha, fechaInicio, fechaFin);
-        const indicadoresPorMes = indicadoresCalculadosPorMes(indicadoresPorPeriodo, indicadores);
+  async obtenerIndicadoresCalculados(oficina: string) {
+    const indicadores = await this.obtenerTodos();
+    const indicadoresCalculados = await obtenerIndicadoresCalculados(
+      oficina,
+      indicadores
+    );
+    return indicadoresCalculados;
+  }
 
-        const indicadoresColor: IndicadorColor[] = indicadores.map(i => {
-            return { id: i.id, nombre: i.nombre, color: i.color };
-        });
+  async obtenerPromedioIndicadoresOficina(
+    oficina: string,
+    fechaInicio: string,
+    fechaFin: string
+  ) {
+    const indicadores = await this.obtenerTodos();
+    const saldosContables = await calcularSaldosContables(
+      indicadores,
+      oficina,
+      fechaInicio,
+      fechaFin
+    );
+    const indicadoresPorFecha = indicadoresCalculadosPorfecha(
+      saldosContables,
+      indicadores
+    );
+    const indicadoresPorPeriodo = indicadoresCalculadosPorPeriodo(
+      indicadoresPorFecha,
+      fechaInicio,
+      fechaFin
+    );
+    const indicadoresPorMes = indicadoresCalculadosPorMes(
+      indicadoresPorPeriodo,
+      indicadores
+    );
 
-        return {
-            indicadores: indicadoresColor,
-            indicadoresCalculados: indicadoresPorMes
-        };
-    }
+    const indicadoresColor: IndicadorColor[] = indicadores.map((i) => {
+      return { id: i.id, nombre: i.nombre, color: i.color };
+    });
+
+    return {
+      indicadores: indicadoresColor,
+      indicadoresCalculados: indicadoresPorMes,
+    };
+  }
 }

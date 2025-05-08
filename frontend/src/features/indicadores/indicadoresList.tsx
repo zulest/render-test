@@ -7,7 +7,7 @@ interface IndicadoresListProps {
     setShowEditor: (show: boolean) => void,
     setEditIndicador: (indicador: IndicadorResponse | null) => void,    
     setFormulaSelected: (indicador: IndicadorResponse) => void,
-    handleDelete: (id: number) => void
+    handleDelete: (indicador: IndicadorResponse) => void
 };
 
 export const IndicadoresList = ({ indicadores, setShowEditor, setEditIndicador, setFormulaSelected, handleDelete }: IndicadoresListProps) => {
@@ -65,7 +65,7 @@ export const IndicadoresList = ({ indicadores, setShowEditor, setEditIndicador, 
                                         <Calculator size={18} />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(indicador.id)}
+                                        onClick={() => handleDelete(indicador)}
                                         className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded-md ml-2"
                                     >
                                         <Trash2 size={18} />

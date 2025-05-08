@@ -1,7 +1,7 @@
 import { Component } from "shared/src/types/indicadores.types";
 
 export interface Indicador {
-    id: number;
+    id: string;
     nombre: string;
     descripcion: string;
     meta: number;

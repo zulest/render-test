@@ -1,6 +1,6 @@
 export interface IndicadorCalculado {
     fecha: string; // Fecha del cálculo
-    idIndicador: number; // ID del indicador
+    idIndicador: string; // ID del indicador
     codigoOficina: string; // Código de la oficina
     valor: number; // Valor calculado del indicador
     componentes: Componente; // Componentes del indicador

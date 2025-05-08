@@ -25,11 +25,9 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
     const openModal = () => {
       setIsOpen(true);
       setTimeout(() => setIsVisible(true), 100);
-      console.log("numerador", numerador);
     };
 
     const closeModal = () => {
-      console.log("cerrando el modal");
       setIsVisible(false);
       // Espera a que termine la animación antes de cerrar
       setTimeout(() => setIsOpen(false), 300);
@@ -89,7 +87,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
 
     const save = () => {
         if(!indicador) return;
-        const nuevoIndicador = indicador;
+        const nuevoIndicador = {...indicador};
         const _numerador = procesarComponente(numerador);
         const _denominador = procesarComponente(denominador);
         nuevoIndicador.numerador = _numerador;
@@ -97,7 +95,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
         nuevoIndicador.numeradorAbsoluto = numeradorAbsoluto;
         nuevoIndicador.denominadorAbsoluto = denominadorAbsoluto;
         closeModal();
-        if(nuevoIndicador != indicador && setIndicadores){
+        if(nuevoIndicador !== indicador && setIndicadores){
             setIndicadores(nuevoIndicador);
         }
     }
