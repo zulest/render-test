@@ -1,7 +1,6 @@
 import { BaseFirebaseRepository } from "../../base/base.firebaseRepository";
 import { Indicador } from "./indicadores.model";
-import { calcularSaldosContables } from "./test/obtenerSaldosContables";
-import { obtenerIndicadoresCalculados } from "./transformers/obtenerIndicadoresCalculados";
+import { calcularSaldosContables } from "./transformers/obtenerSaldosContables";
 import {
   indicadoresCalculadosPorfecha,
   indicadoresCalculadosPorMes,
@@ -20,15 +19,6 @@ export class IndicadoresRepository extends BaseFirebaseRepository<Indicador> {
     data.id = docRef.id;
     await docRef.set(data);
     return data as Indicador;
-  }
-
-  async obtenerIndicadoresCalculados(oficina: string) {
-    const indicadores = await this.obtenerTodos();
-    const indicadoresCalculados = await obtenerIndicadoresCalculados(
-      oficina,
-      indicadores
-    );
-    return indicadoresCalculados;
   }
 
   async obtenerPromedioIndicadoresOficina(

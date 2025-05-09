@@ -1,7 +1,7 @@
 import { Indicador } from "../indicadores.model";
 import { SaldosRepository } from "../../saldosContables/saldos.repository";
 import { CalculoIndicador, IndicadorCalculado } from "../interfaces/IndicadorCalculado.interface";
-import { calcularIndicador } from "../transformers/calcularIndicador";
+import { calcularIndicador } from "./calcularIndicador";
 import { SaldosContables } from "../../saldosContables/saldos.model";
 
 

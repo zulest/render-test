@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, Bot, User, Loader2 } from 'lucide-react';
 import { InputAudio } from './InputAudio';
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   id: string;
@@ -198,7 +199,9 @@ export const ChatInterface: React.FC = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                <p className="text-sm whitespace-pre-wrap">
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                </p>
                 {
                   message.audio ? (
                     <audio controls className="mt-1">

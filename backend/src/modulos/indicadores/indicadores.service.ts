@@ -35,10 +35,6 @@ export class IndicadoresService {
         return await this.indicadoresRepository.eliminar(id);
     }
 
-    async obtenerIndicadoresCalculados(oficina: string) {
-        return await this.indicadoresRepository.obtenerIndicadoresCalculados(oficina);
-    }
-
     async obtenerPromedioIndicadoresOficina(oficina: string, fechaInicio: string, fechaFin: string) {
         return await this.indicadoresRepository.obtenerPromedioIndicadoresOficina(oficina, fechaInicio, fechaFin);
     }

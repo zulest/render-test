@@ -80,19 +80,6 @@ export class IndicadoresController {
         }
     }
 
-
-    async obtenerIndicadoresCalculados(req: Request, res: Response): Promise<void> {
-        try {
-            const { oficina } = req.params;
-            console.log(`[controller] Obteniendo indicadores calculados para la oficina: ${oficina}`);
-            const indicadoresCalculados = await this.indicadoresService.obtenerIndicadoresCalculados(oficina);
-            res.status(200).json(indicadoresCalculados);
-        } catch (error) {
-            console.error("[controller] Error al obtener los indicadores calculados:", error);
-            res.status(500).json({ message: 'Error al obtener los indicadores calculados', error });
-        }
-    }
-
     async obtenerPromedioIndicadoresOficina(req: Request, res: Response): Promise<void> {
         try {
             const oficina = req.query["oficina"];

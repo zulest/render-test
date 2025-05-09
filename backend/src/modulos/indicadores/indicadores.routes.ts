@@ -7,9 +7,6 @@ const indicadoresController = new IndicadoresController();
 // Ruta para obtener todos los indicadores financieros
 router.get('/', indicadoresController.obtenerIndicadores.bind(indicadoresController));
 
-// Ruta para obtener indicadores calculados
-router.get('/calcular/:oficina', indicadoresController.obtenerIndicadoresCalculados.bind(indicadoresController));
-
 router.get('/calcular-periodo', indicadoresController.obtenerPromedioIndicadoresOficina.bind(indicadoresController));
 
 // Ruta para obtener un indicador financiero por ID
