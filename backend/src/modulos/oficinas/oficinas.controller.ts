@@ -13,6 +13,7 @@ class OficinasController {
             const oficinas = await this.oficinaService.obtenerTodas();
             res.json(oficinas);
         } catch (error) {
+            console.error('Error al obtener las oficinas', error);
             res.status(500).json({ error: 'Error al obtener las oficinas' });
         }
     }

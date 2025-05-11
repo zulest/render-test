@@ -1,5 +1,6 @@
 import { Oficina } from './oficinas.model';
 import { OficinasRepository } from './oficinas.repository';
+import {ObtenerOficinasResponse} from 'shared/src/types/oficinas.types'
 
 export class OficinaService {
     private oficinasRepository: OficinasRepository;
@@ -8,7 +9,10 @@ export class OficinaService {
         this.oficinasRepository = new OficinasRepository();
     }
 
-    async obtenerTodas(): Promise<Oficina[]> {
-        return await this.oficinasRepository.obtenerTodas();
+    async obtenerTodas(): Promise<ObtenerOficinasResponse> {
+        const oficinas = await this.oficinasRepository.obtenerTodas();
+        return {
+            oficinas: oficinas
+        }
     }
 }

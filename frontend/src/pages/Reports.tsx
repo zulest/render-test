@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FileText, Edit2, Trash } from "lucide-react";
 import { ConfiguracionReporteDTO } from "shared/src/types/reportes.types";
-import { NuevoReporteHandle, NuevoReporteView } from "../features/reportes/nuevoReporte";
+import {
+  NuevoReporteHandle,
+  NuevoReporteView,
+} from "../features/reportes/nuevoReporte";
+import {
+  ObtenerOficinasResponse,
+  OficinasDTO,
+} from "shared/src/types/oficinas.types";
 
 export const Reports: React.FC = () => {
   const [reportesActivos, setReportesActivos] = useState<
@@ -9,9 +16,22 @@ export const Reports: React.FC = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [oficinas, setOficinas] = useState<OficinasDTO[]>([]);
   const nuevoReporteRef = useRef<NuevoReporteHandle>(null);
 
   useEffect(() => {
+    const cargarOficinas = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/oficinas");
+        const data = await response.json();
+        setOficinas(data.oficinas);
+      } catch (error) {
+        console.error("Error fetching oficinas:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     const fetchReportesActivos = async () => {
       try {
         setIsLoading(true);
@@ -24,6 +44,7 @@ export const Reports: React.FC = () => {
         setIsLoading(false);
       }
     };
+    cargarOficinas();
     fetchReportesActivos();
   }, []);
 
@@ -44,7 +65,7 @@ export const Reports: React.FC = () => {
     fetchReportesActivos();
   };
 
-  const filteredReports = reportesActivos.filter((report) => {
+  const filteredReports = reportesActivos?.filter((report) => {
     const matchesSearch =
       report.descripcion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.nombre.toLowerCase().includes(searchTerm.toLowerCase());
@@ -84,7 +105,7 @@ export const Reports: React.FC = () => {
         </div>
 
         <div className="mt-4 md:mt-0 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-          <button 
+          <button
             className="px-4 py-2 bg-blue-600 text-white rounded-md flex items-center justify-center hover:bg-blue-700 transition"
             onClick={() => nuevoReporteRef.current?.openModal()}
           >
@@ -205,7 +226,12 @@ export const Reports: React.FC = () => {
         </div>
       </div>
 
-      <NuevoReporteView ref={nuevoReporteRef} tiposReporte={reportesActivos} onClose={handleNewReportClosed} />
+      <NuevoReporteView
+        oficinas={oficinas}
+        ref={nuevoReporteRef}
+        tiposReporte={reportesActivos}
+        onClose={handleNewReportClosed}
+      />
     </div>
   );
 };

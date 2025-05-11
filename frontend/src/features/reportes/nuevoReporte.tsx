@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { ConfiguracionReporteDTO } from "shared/src/types/reportes.types";
-import { Calendar, Clock, CalendarRange, X, UserRoundPlus, UserRound } from 'lucide-react';
+import { Calendar, Clock, CalendarRange, X, UserRound } from 'lucide-react';
+import { OficinasDTO } from "shared/src/types/oficinas.types";
 
 export type NuevoReporteHandle = {
   openModal: () => void;
@@ -10,7 +11,7 @@ export type NuevoReporteHandle = {
 interface NuevoReporteProps {
   onClose?: () => void;
   tiposReporte: ConfiguracionReporteDTO[];
-  oficinas: { id: string; nombre: string }[];
+  oficinas: OficinasDTO[];
 }
 
 export const NuevoReporteView = forwardRef<NuevoReporteHandle, NuevoReporteProps>(
@@ -119,7 +120,7 @@ export const NuevoReporteView = forwardRef<NuevoReporteHandle, NuevoReporteProps
               >
                 <option value="">Selecciona una oficina</option>
                 {oficinas?.map((oficina) => (
-                  <option key={oficina.id} value={oficina.id}>
+                  <option key={oficina.nombre} value={oficina.nombre}>
                     {oficina.nombre}
                   </option>
                 ))}
