@@ -5,3 +5,4 @@ frontend/.bolt
 shared/node_modules
 shared/dist
 .vscode/settings.json
+shared/tsconfig.tsbuildinfo
