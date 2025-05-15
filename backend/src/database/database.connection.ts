@@ -5,6 +5,8 @@ import { Sequelize } from 'sequelize';
 
 require('custom-env').env()
 
+
+
 let sequelizeInstance: Sequelize | null = null;
 
 /**
@@ -22,7 +24,7 @@ export const getSequelize = (): Sequelize => {
     const dbHost = process.env.DB_HOST as string;
     const dbPort = parseInt(process.env.DB_PORT || '3306', 10);
     const dialect = (process.env.SQL_DIALECT || 'mysql') as any;
-
+    
     console.log('[Database] Creando conexión a la base de datos');
     console.log(`[Database] DB_NAME: ${dbName}`);
     console.log(`[Database] DB_USER: ${dbUser}`);

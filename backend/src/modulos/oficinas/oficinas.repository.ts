@@ -16,7 +16,6 @@ export class OficinasRepository {
                 WHERE D.NOMBRE = 'Consolidado'
                 ORDER BY nombre ASC`;
         const [results] = await this.sequelize.query(query);
-        console.log("[oficinas.repository] resultados",results);
         return results as Oficina[];
     }
 }

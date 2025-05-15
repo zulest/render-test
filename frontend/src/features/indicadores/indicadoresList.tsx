@@ -11,6 +11,7 @@ interface IndicadoresListProps {
 };
 
 export const IndicadoresList = ({ indicadores, setShowEditor, setEditIndicador, setFormulaSelected, handleDelete }: IndicadoresListProps) => {
+    console.log("indicadores", indicadores);
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="overflow-x-auto">
@@ -35,7 +36,7 @@ export const IndicadoresList = ({ indicadores, setShowEditor, setEditIndicador, 
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {indicadores.map((indicador) => (
+                        {indicadores?.map((indicador) => (
                             <tr key={indicador.id}>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">{indicador.nombre}</div>

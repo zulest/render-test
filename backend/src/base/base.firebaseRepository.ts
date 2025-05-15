@@ -1,4 +1,4 @@
-import { DocumentSnapshot, Firestore } from '@google-cloud/firestore';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 import { CollectionReference, DocumentData } from '@google-cloud/firestore';
 import { firestore } from '../config/firebase.config';
 

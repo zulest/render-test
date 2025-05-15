@@ -1,7 +1,6 @@
 import * as admin from 'firebase-admin';
-import * as dotenv from 'dotenv';
+require('custom-env').env()
 
-dotenv.config();
 
 const credentials = {
   type: process.env.FIREBASE_TYPE || '',

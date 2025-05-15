@@ -1,4 +1,4 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../../database/database.connection';
 import { TABLA_CONFIGURACIONES_REPORTES } from '../../database/database.constants';
 
@@ -9,7 +9,10 @@ import { TABLA_CONFIGURACIONES_REPORTES } from '../../database/database.constant
 export class ConfiguracionReporte extends Model {
     public nombre!: string;
     public descripcion!: string | null;
-    public categorias!: any;
+    public categorias!: {
+        nombre: string;
+        cuentas: string[];
+    }[];
     public esActivo!: boolean;
     public fechaCreacion!: Date;
     public fechaModificacion!: Date;
@@ -33,7 +36,7 @@ export class ConfiguracionReporte extends Model {
         return {
             nombre: this.nombre,
             descripcion: this.descripcion,
-            categorias: JSON.stringify(this.categorias),
+            categorias: this.categorias,
             esActivo: this.esActivo,
             fechaCreacion: this.fechaCreacion,
             fechaModificacion: this.fechaModificacion

@@ -5,29 +5,13 @@ import { useCallback } from "react";
 
 export const IndicadoresChart = () => {
     const [data, setData] = useState<IndicadorCalcularPeriodoResponse | null>(null);
-    const filters = ['Último mes', 'Último trimestre', 'Último año'];
-    const [selectedFilter, setSelectedFilter] = useState('Último semestre');
 
-    const onFilterChange = useCallback((filter: string) => {
+    const onFilterChange = useCallback(() => {
         const today = new Date();
         const startDate = new Date();
-
-        switch (filter) {
-            case 'Último mes':
-                startDate.setMonth(today.getMonth() - 1);
-                break;
-            case 'Último trimestre':
-                startDate.setMonth(today.getMonth() - 3);
-                break;
-            case 'Último semestre':
-                startDate.setMonth(today.getMonth() - 6);
-                break;
-            case 'Último año':
-                startDate.setFullYear(today.getFullYear() - 1);
-                break;
-            default:
-                startDate.setFullYear(today.getFullYear() - 1); // Default to last year
-        }
+        
+        // Filtrar por semestre por defecto
+        startDate.setMonth(today.getMonth() - 6);
 
         // Format dates as YYYY-MM-DD
         const formatDate = (date: Date) => {
@@ -45,21 +29,23 @@ export const IndicadoresChart = () => {
     }, [])
 
     useEffect(() => {
-        onFilterChange(selectedFilter);
-    }, [onFilterChange, selectedFilter]);
+        onFilterChange();
+    }, [onFilterChange]);
 
     const obtenerIndicadoresCalculados = async (inicio: string, fin: string) => {
         try {
             const response = await fetch(`/api/indicadores/calcular-periodo/?oficina=TABACUNDO&fechaInicio=${inicio}&fechaFin=${fin}`);
             const result = await response.json();
             console.log("result", result);
+            if(result.error){
+                throw new Error(result.error);
+            }
             setData(result);
         } catch (error) {
+            setData(null);
             console.error("Error fetching data:", error);
         }
     }
-
-
 
     return (
         <div className="grid grid-cols-1 gap-6">
@@ -80,8 +66,6 @@ export const IndicadoresChart = () => {
                     name: indicador.nombre,
                 })) : []}
                 height={350}
-                filters={filters}
-                onFilterChange={setSelectedFilter}
             />)}
         </div>
     );

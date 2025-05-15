@@ -1,7 +1,9 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { ConfiguracionReporteDTO } from "shared/src/types/reportes.types";
+import { ConfiguracionReporteDTO, ReporteTendenciaResponse } from "shared/src/types/reportes.types";
 import { Calendar, Clock, CalendarRange, X, UserRound } from 'lucide-react';
 import { OficinasDTO } from "shared/src/types/oficinas.types";
+import { ReporteTendenciaRequest } from "shared/src/types/reportes.types";
+import toast from 'react-hot-toast';
 
 export type NuevoReporteHandle = {
   openModal: () => void;
@@ -23,6 +25,7 @@ export const NuevoReporteView = forwardRef<NuevoReporteHandle, NuevoReporteProps
     const [periodo, setPeriodo] = useState('mensual');
     const [fechaInicio, setFechaInicio] = useState('');
     const [fechaFin, setFechaFin] = useState('');
+    const [creandoReporte, setCreandoReporte] = useState(false);
 
     const openModal = () => {
       setIsOpen(true);
@@ -56,23 +59,46 @@ export const NuevoReporteView = forwardRef<NuevoReporteHandle, NuevoReporteProps
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!selectedTipo || !selectedOficina || !fechaInicio || !fechaFin) {
-        alert('Por favor complete todos los campos requeridos');
+        toast.error('Por favor complete todos los campos requeridos');
         return;
       }
 
+      const toastId = toast.loading("Creando reporte...");
+
       try {
-        // Aquí iría la llamada al backend para crear el reporte
-        console.log('Creating report with data:', {
+        setCreandoReporte(true);
+        const req: ReporteTendenciaRequest = {
           tipo: selectedTipo,
           oficina: selectedOficina,
-          periodo,
-          fechaInicio,
-          fechaFin
-        });
-        closeModal();
+          periodo: periodo,
+          fechaInicio: fechaInicio,
+          fechaFin: fechaFin
+        };
+        
+        const response = await fetch("api/reportes/tendencia", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(req)
+        })
+
+
+        const responseData: ReporteTendenciaResponse | { success: boolean; message: string; } = await response.json();
+        
+        if (!responseData.success) {
+          toast.error(responseData.message || 'Error al crear el reporte');
+          return;
+        }
+        
+        toast.success("Reporte creado exitosamente");
       } catch (error) {
         console.error('Error creating report:', error);
-        alert('Error al crear el reporte');
+        toast.error("Error al crear el reporte");
+      } finally {
+        closeModal();
+        toast.dismiss(toastId);
+        setCreandoReporte(false);
       }
     };
 
@@ -179,8 +205,9 @@ export const NuevoReporteView = forwardRef<NuevoReporteHandle, NuevoReporteProps
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                disabled={creandoReporte}
               >
-                Crear Reporte
+                {creandoReporte ? 'Creando...' : 'Crear Reporte'}
               </button>
             </div>
           </form>

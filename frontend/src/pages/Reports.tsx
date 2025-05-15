@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FileText, Edit2, Trash } from "lucide-react";
-import { ConfiguracionReporteDTO } from "shared/src/types/reportes.types";
+import { FileText, Edit2, Trash, PlusIcon } from "lucide-react";
+import {
+  ConfiguracionGuardadaResponse,
+  ConfiguracionReporteDTO,
+} from "shared/src/types/reportes.types";
+import {
+  CrearEditarConfiguracionView,
+  CrearEditarConfiguracionHandle,
+} from "../features/reportes/crearEditarConfiguracion";
 import {
   NuevoReporteHandle,
   NuevoReporteView,
 } from "../features/reportes/nuevoReporte";
+import { OficinasDTO } from "shared/src/types/oficinas.types";
+import toast, { Toaster } from "react-hot-toast";
+import { ApiResponse } from "shared/src/types/generic.types";
 import {
-  ObtenerOficinasResponse,
-  OficinasDTO,
-} from "shared/src/types/oficinas.types";
+  EliminarConfiguracionDialog,
+  EliminarConfiguracionHandle,
+} from "../features/reportes/eliminarReporteDialog";
 
 export const Reports: React.FC = () => {
   const [reportesActivos, setReportesActivos] = useState<
@@ -18,6 +28,128 @@ export const Reports: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [oficinas, setOficinas] = useState<OficinasDTO[]>([]);
   const nuevoReporteRef = useRef<NuevoReporteHandle>(null);
+  const crearEditarConfiguracionRef =
+    useRef<CrearEditarConfiguracionHandle>(null);
+  const eliminarConfiguracionRef = useRef<EliminarConfiguracionHandle>(null);
+
+  // To open for new config
+  const handleNuevaConfiguracion = () => {
+    crearEditarConfiguracionRef.current?.openModal();
+  };
+
+  const reload = async () => {
+    const reportesResponse = await fetch("/api/reportes/activos");
+    const reportesData = await reportesResponse.json();
+    setReportesActivos(reportesData.configuraciones);
+  };
+
+  const handleEliminarConfiguracion = (
+    configuracion: ConfiguracionReporteDTO
+  ) => {
+    eliminarConfiguracionRef.current?.openModal(configuracion);
+  };
+
+  // To open for editing
+  const handleEditarConfiguracion = (
+    configuracion: ConfiguracionReporteDTO
+  ) => {
+    crearEditarConfiguracionRef.current?.openModal(configuracion);
+  };
+
+  const deleteConfiguration = async (
+    configuracion: ConfiguracionReporteDTO
+  ) => {
+    const promise = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/reportes/configuracion", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(configuracion),
+        });
+        const parseResponse = await response.json();
+        if (!(parseResponse as ApiResponse).success) {
+          throw new Error("Ah ocurrido un error al eliminar la configuración");
+        }
+        await reload();
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    await toast.promise(promise, {
+      loading: "Eliminando configuración ...",
+      success: "Configuración eliminada!",
+      error: "Ah ocurrido un error al eliminar la configuración",
+    });
+  };
+
+  const updateConfiguration = async (
+    configuracion: ConfiguracionReporteDTO
+  ) => {
+    const promise = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/reportes/configuracion", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(configuracion),
+        });
+        const parseResponse =
+          (await response.json()) as ConfiguracionGuardadaResponse;
+        if (!parseResponse.success) {
+          throw new Error("A ocurrido un error al actualizar la configuración");
+        }
+        await reload();
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    await toast.promise(promise, {
+      loading: "Actualizando configuración ...",
+      success: "Configuración actualizada correctamente",
+      error: "Ah ocurrido un error al actualizada la configuración",
+    });
+  };
+
+  const saveNewConfiguration = async (
+    configuracion: ConfiguracionReporteDTO
+  ) => {
+    const promise = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/reportes/configuracion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(configuracion),
+        });
+        const parsedResponse =
+          (await response.json()) as ConfiguracionGuardadaResponse;
+        if (!parsedResponse.success) {
+          throw new Error("Ah ocurrido un error al crear la configuración");
+        }
+
+        await reload();
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    await toast.promise(promise, {
+      loading: "Creando configuración ...",
+      success: "Configuración creada correctamente",
+      error: "A ocurrido un error al crear la configuración",
+    });
+  };
 
   useEffect(() => {
     const cargarOficinas = async () => {
@@ -114,7 +246,6 @@ export const Reports: React.FC = () => {
           </button>
         </div>
       </div>
-
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full sm:w-64">
@@ -142,6 +273,13 @@ export const Reports: React.FC = () => {
               </svg>
             </div>
           </div>
+          <button
+            onClick={handleNuevaConfiguracion}
+            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md flex gap-1 items-center justify-center hover:bg-blue-700 transition"
+          >
+            <PlusIcon size={18} />
+            <span>Nueva configuración</span>
+          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -180,7 +318,7 @@ export const Reports: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredReports.map((report) => (
+                {filteredReports?.map((report) => (
                   <tr key={report.nombre} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -205,10 +343,16 @@ export const Reports: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       {report.esActivo ? (
                         <>
-                          <button className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded-md">
+                          <button
+                            onClick={() => handleEditarConfiguracion(report)}
+                            className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded-md"
+                          >
                             <Edit2 size={18} />
                           </button>
-                          <button className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded-md">
+                          <button
+                            onClick={() => handleEliminarConfiguracion(report)}
+                            className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded-md"
+                          >
                             <Trash size={18} />
                           </button>
                         </>
@@ -226,12 +370,25 @@ export const Reports: React.FC = () => {
         </div>
       </div>
 
+      <EliminarConfiguracionDialog
+        ref={eliminarConfiguracionRef}
+        onDelete={(config) => deleteConfiguration(config)}
+      />
+
+      <CrearEditarConfiguracionView
+        ref={crearEditarConfiguracionRef}
+        onEdit={(config) => updateConfiguration(config)}
+        onSave={(config) => {
+          saveNewConfiguration(config);
+        }}
+      />
       <NuevoReporteView
         oficinas={oficinas}
         ref={nuevoReporteRef}
         tiposReporte={reportesActivos}
         onClose={handleNewReportClosed}
       />
+      <Toaster />
     </div>
   );
 };

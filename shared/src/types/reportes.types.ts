@@ -14,9 +14,8 @@ export interface ConfiguracionReporteDTO {
      * @example [{ nombre: "category1", id: "1" }]
      */
     categorias: Array<{
-        id: string;
         nombre: string;
-        [key: string]: any; // Para propiedades adicionales
+        cuentas: string[];
     }>;
 
     /**
@@ -40,4 +39,44 @@ export interface ConfiguracionesActivasResponse {
      * Lista de configuraciones activas de reportes
      */
     configuraciones: ConfiguracionReporteDTO[];
+}
+
+export interface ReporteTendenciaRequest {
+    tipo: ConfiguracionReporteDTO;
+    oficina: string;
+    periodo: string;
+    fechaInicio: string;
+    fechaFin: string;
+}
+
+export interface ReporteTendenciaResponse {
+    success: boolean;
+    message: string;
+    data?: {
+        fechas: string[];
+        categorias: {
+            nombre: string;
+            cuentas: {
+                codigo: number;
+                nombre: string;
+                valores: Record<string, number>;
+            }[];
+            valores: Record<string, number>;
+        }[];
+        oficina: string;
+    }
+}
+
+export interface CuentaResponse {
+    cuentas: CuentaData[];
+}
+
+export interface CuentaData {
+    CODIGO: number;
+    NOMBRE: string;
+}
+
+export interface ConfiguracionGuardadaResponse {
+    success: boolean;
+    message: string;
 }

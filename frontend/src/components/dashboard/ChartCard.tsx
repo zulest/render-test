@@ -48,35 +48,37 @@ export const ChartCard: React.FC<ChartCardProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
-          <div className="relative">
-            <button
-              className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-md px-3 py-1.5"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <span>{selectedFilter}</span>
-              <ChevronDown size={16} />
-            </button>
+          {filters && filters.length > 0 && onFilterChange && (
+            <div className="relative">
+              <button
+                className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-md px-3 py-1.5"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <span>{selectedFilter}</span>
+                <ChevronDown size={16} />
+              </button>
 
-            {showFilters && (
-              <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-10 py-1 border border-gray-200">
-                {filters.map((filter) => (
-                  <button
-                    key={filter}
-                    className={`block w-full text-left px-4 py-2 text-sm ${filter === selectedFilter
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    onClick={() => {
-                      selectFilter(filter);
-                      setShowFilters(false);
-                    }}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+              {showFilters && (
+                <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg z-10 py-1 border border-gray-200">
+                  {filters.map((filter) => (
+                    <button
+                      key={filter}
+                      className={`block w-full text-left px-4 py-2 text-sm ${filter === selectedFilter
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      onClick={() => {
+                        selectFilter(filter);
+                        setShowFilters(false);
+                      }}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="relative group">
             <button className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">

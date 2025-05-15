@@ -5,12 +5,9 @@ import {
   MessageSquare, 
   FileText, 
   Settings, 
-  CreditCard, 
-  Users, 
   Calendar, 
   ChevronLeft,
   ChevronRight,
-  PiggyBank,
   TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -24,9 +21,6 @@ export const Sidebar: React.FC = () => {
     { name: 'Análisis', icon: <TrendingUp size={20} />, path: '/analysis' },
     { name: 'AI Asistente', icon: <MessageSquare size={20} />, path: '/ai-chat' },
     { name: 'Informes', icon: <FileText size={20} />, path: '/reports' },
-    { name: 'Cartera', icon: <CreditCard size={20} />, path: '/loans' },
-    { name: 'Socios', icon: <Users size={20} />, path: '/members' },
-    { name: 'Captaciones', icon: <PiggyBank size={20} />, path: '/deposits' },
     { name: 'Calendario', icon: <Calendar size={20} />, path: '/calendar' },
     { name: 'Configuración', icon: <Settings size={20} />, path: '/settings' },
   ];
