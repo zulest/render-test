@@ -1,6 +1,15 @@
 import { Oficina } from './oficinas.model';
 import { OficinasRepository } from './oficinas.repository';
-import {ObtenerOficinasResponse} from 'shared/src/types/oficinas.types'
+
+// Definimos localmente las interfaces necesarias para evitar problemas de importación
+interface OficinasDTO {
+    nombre: string;
+    codigo: string;
+}
+
+interface ObtenerOficinasResponse {
+    oficinas: OficinasDTO[];
+}
 
 export class OficinaService {
     private oficinasRepository: OficinasRepository;

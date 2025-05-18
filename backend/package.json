@@ -7,6 +7,8 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "dev:local": "SET NODE_ENV=local & nodemon src/server.ts",
+    "sync": "ts-node src/scripts/iniciarSincronizacion.ts",
+    "sync:dev": "nodemon --exec ts-node src/scripts/iniciarSincronizacion.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,6 +24,7 @@
     "firebase-admin": "^13.3.0",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.14.1",
+    "node-cron": "^3.0.3",
     "sequelize": "^6.37.7",
     "shared": "file:../shared"
   },
@@ -29,6 +32,7 @@
     "@types/express": "^5.0.1",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.15.3",
+    "@types/node-cron": "^3.0.11",
     "@types/sequelize": "^4.28.20",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",

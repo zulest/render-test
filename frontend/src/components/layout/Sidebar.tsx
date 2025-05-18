@@ -8,20 +8,30 @@ import {
   Calendar, 
   ChevronLeft,
   ChevronRight,
-  TrendingUp
+  TrendingUp,
+  Database,
+  BarChart2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useAutorizacion } from '../../context/AutorizacionContext';
 
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
+  const { usuario } = useAutorizacion();
+  
+  // Verificar si el usuario tiene permisos de administrador
+  const esAdmin = usuario?.rol === 'administrador' || usuario?.rol === 'gerente_general';
 
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     { name: 'Análisis', icon: <TrendingUp size={20} />, path: '/analysis' },
+    { name: 'Indicadores Contables', icon: <BarChart2 size={20} />, path: '/indicadores-contables' },
     { name: 'AI Asistente', icon: <MessageSquare size={20} />, path: '/ai-chat' },
     { name: 'Informes', icon: <FileText size={20} />, path: '/reports' },
     { name: 'Calendario', icon: <Calendar size={20} />, path: '/calendar' },
+    // Mostrar enlace de sincronización solo para administradores
+    ...(esAdmin ? [{ name: 'Sincronización', icon: <Database size={20} />, path: '/sincronizacion' }] : []),
     { name: 'Configuración', icon: <Settings size={20} />, path: '/settings' },
   ];
   

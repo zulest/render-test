@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { Indicador } from '../indicadores/indicadores.model';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { IndicadoresRepository } from '../indicadores/indicadores.repository';
+import { IndicadorContableModel } from '../indicadores-contables/indicadores-contables.model';
+import { IndicadoresContablesRepository } from '../indicadores-contables/indicadores-contables.repository';
 
 export class IaService {
     private ai: GoogleGenAI;
@@ -10,7 +10,7 @@ export class IaService {
         this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
 
-    indicadoresRepository = new IndicadoresRepository();
+    indicadoresRepository = new IndicadoresContablesRepository();
 
     convertToBase64 = (buffer: Buffer<ArrayBufferLike>): Promise<string> => {
         return new Promise((resolve, reject) => {

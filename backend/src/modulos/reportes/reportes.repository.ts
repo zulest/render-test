@@ -1,8 +1,3 @@
-import {
-  ConfiguracionReporteDTO,
-  CuentaData,
-  ReporteTendenciaRequest,
-} from "shared/src/types/reportes.types";
 import { BaseRepository } from "../../base/base.repository";
 import { ConfiguracionReporte } from "./reportes.model";
 import { SaldosRepository } from "../saldosContables/saldos.repository";
@@ -14,6 +9,32 @@ import {
   TABLA_CUENTACONTABLE,
   TABLA_DIVISION,
 } from "../../database/database.constants";
+
+// Definimos localmente las interfaces necesarias para evitar problemas de importación
+interface ConfiguracionReporteDTO {
+  nombre: string;
+  descripcion: string | null;
+  categorias: Array<{
+    nombre: string;
+    cuentas: string[];
+  }>;
+  esActivo: boolean;
+  fechaCreacion: Date;
+  fechaModificacion: Date;
+}
+
+interface CuentaData {
+  CODIGO: number;
+  NOMBRE: string;
+}
+
+interface ReporteTendenciaRequest {
+  tipo: ConfiguracionReporteDTO;
+  oficina: string;
+  periodo: string;
+  fechaInicio: string;
+  fechaFin: string;
+}
 
 export class ReportesRepository extends BaseRepository<ConfiguracionReporte> {
   constructor() {
@@ -76,7 +97,7 @@ export class ReportesRepository extends BaseRepository<ConfiguracionReporte> {
     // Obtener los saldos para todas las fechas
     const saldos = await this.saldosRepository.obtenerSaldosPorOficinaYFecha(
       reporteData.oficina,
-      fechas.map((fecha) => new Date(Date.parse(fecha + "T00:00:00")))
+      fechas // Ya tenemos las fechas en formato YYYY-MM-DD
     );
 
     if (!saldos || saldos.length === 0)

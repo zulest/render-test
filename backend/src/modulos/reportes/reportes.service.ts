@@ -1,14 +1,68 @@
 import { ConfiguracionReporte } from "./reportes.model";
 import { ReportesRepository } from "./reportes.repository";
-import {
-  ConfiguracionesActivasResponse,
-  ConfiguracionGuardadaResponse,
-  ConfiguracionReporteDTO,
-  CuentaResponse,
-  ReporteTendenciaRequest,
-  ReporteTendenciaResponse,
-} from "shared/src/types/reportes.types";
-import { ApiResponse } from "shared/src/types/generic.types";
+
+// Definimos localmente las interfaces necesarias para evitar problemas de importación
+interface ApiResponse {
+  success: boolean;
+  message: string;
+}
+
+interface ConfiguracionReporteDTO {
+  nombre: string;
+  descripcion: string | null;
+  categorias: Array<{
+    nombre: string;
+    cuentas: string[];
+  }>;
+  esActivo: boolean;
+  fechaCreacion: Date;
+  fechaModificacion: Date;
+}
+
+interface ConfiguracionesActivasResponse {
+  configuraciones: ConfiguracionReporteDTO[];
+}
+
+interface ReporteTendenciaRequest {
+  tipo: ConfiguracionReporteDTO;
+  oficina: string;
+  periodo: string;
+  fechaInicio: string;
+  fechaFin: string;
+}
+
+interface ReporteTendenciaResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    fechas: string[];
+    categorias: {
+      nombre: string;
+      cuentas: {
+        codigo: number;
+        nombre: string;
+        valores: Record<string, number>;
+      }[];
+      valores: Record<string, number>;
+    }[];
+    oficina: string;
+  }
+}
+
+interface CuentaResponse {
+  cuentas: CuentaData[];
+}
+
+interface CuentaData {
+  CODIGO: number;
+  NOMBRE: string;
+}
+
+interface ConfiguracionGuardadaResponse {
+  success: boolean;
+  message: string;
+}
+
 export class ReportesService {
   private reportesRepository: ReportesRepository;
 
